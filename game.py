@@ -20,7 +20,7 @@ answer = "no"
 roll_dice = "no"
 action = "none"
 lo_tengo = False
-he_ido = False
+#he_ido = False
 
 #text blocks
 intro = open("introduction.txt","r")
@@ -34,7 +34,7 @@ class Player:
         self.name = name
         self.s_class = s_class
         self.abilities = [] #creates a list of empty abilities
-        self.backpack = ["calling_device", "notebook", "pencil", "pills_tin"] #default backpack
+        self.backpack = ["calling_device", "noteb0ok", "pencil", "pills_tin", "Farenheit 451 book"] #default backpack
         self.places = ["starting point, home"]
 
         self.rude = 0
@@ -51,6 +51,7 @@ class Player:
         self.knowledge = 0
         self.pretty = 0
         self.health = 100
+        self.scared = 0
         #for the programmer, so he can see the errors
         self.dummy = 0
 
@@ -93,6 +94,8 @@ class Player:
             self.pretty = self.pretty + 1
         elif aspect == "health":
             self.health = self.health + 1
+        elif aspect == "scared":
+            self.scared = self.scared + 1
         else:
             self.dummy = self.dummy + 1
 
@@ -102,10 +105,14 @@ class Scene:
     def __init__(self,description):
         self.description = description
         self.objects = [] #empty list of objects availables in this room
+        self.objects_des = [] #empty list of object descriptions
 
 
     def add_object(self, o):
         self.objects.append(o)
+
+    def add_object_d(self, d):
+        self.objects_des.append(d)
 
     def change_d(self, d):
         self.description = d
@@ -136,6 +143,8 @@ def dice():
 def do_(act, pe, di, sc):
     number_a = 0
     aux = "none"
+    he_ido = False
+
     #COMMANDS LIST
     # SEE
     if act == "see":
@@ -145,6 +154,7 @@ def do_(act, pe, di, sc):
         print "2- something else"
         op = raw_input("What do you want to see? >> ")
 
+        #it checks in scene
         if op == "1" or op == "around":
             print sc.description
         else:
@@ -152,7 +162,12 @@ def do_(act, pe, di, sc):
             print "proximo"
             for i in sc.objects:
                 print i
-
+            ob = raw_input("What do you want to see of those? >> ")
+            #accede a la posicion del objeto mencionado e imprime su descripcion
+            for x in sc.objects:
+                if x == ob:
+                    n = sc.objects.index(x)
+                    print sc.objects_des[n]
     #CHECK BACKPACK
     elif act == "check backpack":
         for x in pe.backpack:
@@ -165,6 +180,7 @@ def do_(act, pe, di, sc):
 
         obj = raw_input("What are you going to use? >> ")
 
+        #it checks in the backpack
         for j in pe.backpack:
             if obj == j:
                 lo_tengo = True
@@ -180,29 +196,35 @@ def do_(act, pe, di, sc):
 
     #READ
     elif act == "read":
+        no_read = False
         nb = raw_input("Want to read the notebook? >> ")
         if nb == "yes":
             pa = raw_input("Which page? >> ")
             print di.pages[int(pa)]
             # use read_page instead
         else:
-            #this will change
-            #print "You have nothing else to read for now"
+
             for a in pe.backpack:
-                if a.contains("book"):
+                if "book" in a:
                     sentence = "Read " + a
                     answer = raw_input( sentence + " ? >> " )
                     if answer == "yes":
                         print "You read " + a
                     else:
                         print "You changed your mind and let the book alone."
-                if b.contains("paper"):
+                        no_read = True
+                elif "paper" in a:
                     sentence = "Read " + b
                     answer = raw_input(sentence + "? >> ")
                     if answer == "yes":
                         print "You read " + b
                     else:
                         print "You changed your mind and let the paper alone."
+                        no_read = True
+
+        if no_read:
+            print "Well, you have nothing else to read yet."
+
         number_a = 3
 
     #SLEEP
@@ -218,17 +240,22 @@ def do_(act, pe, di, sc):
 
     #GO
     elif act == "go":
-        for a in pe.places:
-            print a
-        place = raw_input("where do you want to go? >> ")
-        for b in pe.places:
-            if b == place:
+        for i in pe.places:
+            print i
+
+        pl = raw_input("Where are you going? >> ")
+
+        #it checks in the places
+        for j in pe.places:
+            if pl == j:
                 he_ido = True
 
         if he_ido:
-            print "You go to " + place
-        #number_a = 6
-        aux = place
+            print "You are going to " + pl
+            aux = pl
+        else:
+            print "You don't know that place yet"
+
 
     #TAKE
     elif act == "takes":
@@ -285,7 +312,7 @@ else:
 #creating main character
 p = Player(name_,cla)
 for i in p.backpack:
-    if i == "notebook":
+    if i == "noteb0ok":
         diario = Notebook(name_)
 
 # getting a friend
@@ -346,15 +373,22 @@ else:
 
 print "Now, you are on your own..."
 
-#key is watching, let the player try other things
+# define first scene
 first_sc = Scene("sitio de inicio")
-
+#siempre por pares (porque usa append)
 first_sc.add_object("objeto1")
-first_sc.add_object("objeto2")
-first_sc.add_object("objeto3")
-first_sc.add_object("objeto4")
+first_sc.add_object_d("descripcion objecto1")
 
-while(action != "see"):
+first_sc.add_object("objeto2")
+first_sc.add_object_d("descripcion objecto2")
+
+first_sc.add_object("objeto3")
+first_sc.add_object_d("descripcion objecto3")
+
+first_sc.add_object("objeto4")
+first_sc.add_object_d("descripcion objecto3")
+
+while(action != "go"):
 
     action = raw_input("What do you do? >> ")
     do_(action, p, diario, first_sc)
