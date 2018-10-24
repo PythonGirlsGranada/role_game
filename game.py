@@ -26,6 +26,7 @@ lo_tengo = False
 intro = open("introduction.txt","r")
 dice_rule = open("dice.txt", "r")
 primer_escenario = open("dice.txt", "r")
+portada = open("portada.txt", "r")
 
 # defining the basic player
 class Player:
@@ -376,7 +377,7 @@ def dream(p):
     elif dream == 4:
         p.add_personality("angry")
 
-
+print portada.read()
 #printing the introduction...
 print intro.read()
 
