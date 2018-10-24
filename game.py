@@ -34,7 +34,7 @@ class Player:
         self.name = name
         self.s_class = s_class
         self.abilities = [] #creates a list of empty abilities
-        self.backpack = ["message_device", "noteb0ok", "pencil", "pills_tin", "Farenheit 451 book"] #default backpack
+        self.backpack = ["message_device", "noteb0ok", "pills_tin", "Farenheit 451 book"] #default backpack
         self.places = ["starting point", "home"]
 
         self.rude = 0
@@ -54,6 +54,8 @@ class Player:
         self.scared = 0
         #for the programmer, so he can see the errors
         self.dummy = 0
+
+        self.pills_t = 10
 
     def add_ability(self, ab):
         self.abilities.append(ab)
@@ -237,6 +239,33 @@ def do_(act, pe, di, sc, b):
             print "You are going to use " + obj
             aux = obj
             answer = 0
+            if "Book" in obj:
+                print "Maybe you should *read* it"
+
+            if obj == "Noteb0ok":
+                print "Maybe you should read or write it"
+
+            if obj == "pills_tin":
+                n = pe.pills_t
+                sent = "You have " + str(n)
+                print sent + " pills left in here."
+
+                if n > 0:
+                    answer = raw_input("Take one? >> ")
+                    if answer == "yes":
+                        pe.pills_t = pe.pills_t - 1
+                        pe.add_personality("crazy")
+                        print "You took a pill. Anyway, what are these?"
+                    elif answer == "no":
+                        print "You changed your mind..."
+                    else:
+                        print "Wrong answer"
+                else:
+                    print "You have no pills left"
+
+            if "paper" in obj:
+                print "Maybe you should *read* it"
+
             if obj == "message_device":
                 while answer != "5":
                     print "What do you want to do?"
