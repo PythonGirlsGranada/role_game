@@ -34,8 +34,8 @@ class Player:
         self.name = name
         self.s_class = s_class
         self.abilities = [] #creates a list of empty abilities
-        self.backpack = ["calling_device", "noteb0ok", "pencil", "pills_tin", "Farenheit 451 book"] #default backpack
-        self.places = ["starting point, home"]
+        self.backpack = ["message_device", "noteb0ok", "pencil", "pills_tin", "Farenheit 451 book"] #default backpack
+        self.places = ["starting point", "home"]
 
         self.rude = 0
         self.happy = 0
@@ -129,6 +129,22 @@ class Notebook:
     def read_page(self, p):
         print self.pages[int(p)]
 
+class Busca:
+    def __init__(self, dummy):
+        self.messages = []
+        self.autor = []
+        self.contacts = ["Lau#76588","Self#27860"]
+        self.sent = []
+        self.sent_to = []
+
+
+    def send_me(self,m,d):
+        self.sent.append(m)
+        self.sent_to.append(d)
+
+    def receive_m(self,m,e):
+        self.messages.append(m)
+        self.autor.append(e)
 
 #dice from 0 to 99
 def dice():
@@ -139,8 +155,40 @@ def dice():
     print d
     return d
 
+#mandar mensajes en el busca
+def send_m(b):
+    print "Contacts: "
+    print "------------"
+    for i in b.contacts:
+        print i
+    print "------------"
+    de = raw_input("Who do you want to message? >> ")
+    me = raw_input("Type the text >> ")
+    b.send_me(me,de)
+
+#comprobar mensajes en el busca
+def check_m(b):
+    print "Last messages:"
+    print "--------------"
+    for i in b.messages:
+        print i
+        print "sent by:"
+        n = b.messages.index(i)
+        print b.autor[n]
+        print "--------------"
+
+def check_m_s(b):
+    print "Last messages:"
+    print "--------------"
+    for i in b.sent:
+        print i
+        print "sent to:"
+        n = b.sent.index(i)
+        print b.sent_to[n]
+        print "--------------"
+
 #select the action
-def do_(act, pe, di, sc):
+def do_(act, pe, di, sc, b):
     number_a = 0
     aux = "none"
     he_ido = False
@@ -188,6 +236,32 @@ def do_(act, pe, di, sc):
         if lo_tengo:
             print "You are going to use " + obj
             aux = obj
+            answer = 0
+            if obj == "message_device":
+                while answer != "5":
+                    print "What do you want to do?"
+                    print "-----------------------"
+                    print "1- Send message"
+                    print "2- See last messages"
+                    print "3- See last sent"
+                    print "4- See contacts"
+                    print "5- Exit"
+                    print "-----------------------"
+                    answer = raw_input("Enter the option number >> ")
+                    if answer == "1":
+                        send_m(b)
+                    elif answer == "2":
+                        check_m(b)
+                    elif answer == "3":
+                        check_m_s(b)
+                    elif answer == "4":
+                        for i in b.contacts:
+                            print i
+                    elif answer == "5":
+                        print "Closing the device..."
+                    else:
+                        print "Wrong option"
+
         else:
             print "You don't have that item yet"
 
@@ -203,7 +277,7 @@ def do_(act, pe, di, sc):
             print di.pages[int(pa)]
             # use read_page instead
         else:
-
+            #leer libros o notas
             for a in pe.backpack:
                 if "book" in a:
                     sentence = "Read " + a
@@ -242,21 +316,13 @@ def do_(act, pe, di, sc):
     elif act == "go":
         for i in pe.places:
             print i
-
-        pl = raw_input("Where are you going? >> ")
-
-        #it checks in the places
+        res = raw_input("Where do you want to go? >> ")
         for j in pe.places:
-            if pl == j:
+            if res == j:
                 he_ido = True
-
         if he_ido:
-            print "You are going to " + pl
-            aux = pl
-        else:
-            print "You don't know that place yet"
-
-
+            print "You go " + res
+        aux = res
     #TAKE
     elif act == "takes":
         ob = raw_input("What are you going to take?")
@@ -314,7 +380,7 @@ p = Player(name_,cla)
 for i in p.backpack:
     if i == "noteb0ok":
         diario = Notebook(name_)
-
+b = Busca("none")
 # getting a friend
 new_cha = "no"
 new_cha = raw_input("Assistant - Do you want a friend to join you? >> ")
@@ -391,4 +457,4 @@ first_sc.add_object_d("descripcion objecto3")
 while(action != "go"):
 
     action = raw_input("What do you do? >> ")
-    do_(action, p, diario, first_sc)
+    do_(action, p, diario, first_sc, b)
