@@ -19,6 +19,8 @@ name_ = "dummy"
 answer = "no"
 roll_dice = "no"
 action = "none"
+lo_tengo = False
+he_ido = False
 
 #text blocks
 intro = open("introduction.txt","r")
@@ -33,6 +35,7 @@ class Player:
         self.s_class = s_class
         self.abilities = [] #creates a list of empty abilities
         self.backpack = ["calling_device", "notebook", "pencil", "pills_tin"] #default backpack
+        self.places = ["starting point, home"]
 
         self.rude = 0
         self.happy = 0
@@ -56,6 +59,9 @@ class Player:
 
     def change_class(self, cl):
         self.s_class = cl
+
+    def add_place(self,pl):
+        self.places.append(pl)
 
     def add_personality(self, aspect):
 
@@ -92,6 +98,18 @@ class Player:
 
 
 
+class Scene:
+    def __init__(self,description):
+        self.description = description
+        self.objects = [] #empty list of objects availables in this room
+
+
+    def add_object(self, o):
+        self.objects.append(o)
+
+    def change_d(self, d):
+        self.description = d
+
 #notebook
 class Notebook:
     def __init__(self, owner):
@@ -115,15 +133,52 @@ def dice():
     return d
 
 #select the action
-def do_(act, pe, di):
+def do_(act, pe, di, sc):
     number_a = 0
+    aux = "none"
+    #COMMANDS LIST
+    # SEE
     if act == "see":
-        number_a = 1
+        print "See..."
+        print "------------------"
+        print "1- around"
+        print "2- something else"
+        op = raw_input("What do you want to see? >> ")
+
+        if op == "1" or op == "around":
+            print sc.description
+        else:
+            #add logic
+            print "proximo"
+            for i in sc.objects:
+                print i
+
+    #CHECK BACKPACK
     elif act == "check backpack":
         for x in pe.backpack:
             print x
+    #USE
     elif act == "use":
+        #lo_tengo = False
+        for i in pe.backpack:
+            print i
+
+        obj = raw_input("What are you going to use? >> ")
+
+        for j in pe.backpack:
+            if obj == j:
+                lo_tengo = True
+
+        if lo_tengo:
+            print "You are going to use " + obj
+            aux = obj
+        else:
+            print "You don't have that item yet"
+
+        #return obj
         number_a = 2
+
+    #READ
     elif act == "read":
         nb = raw_input("Want to read the notebook? >> ")
         if nb == "yes":
@@ -132,17 +187,56 @@ def do_(act, pe, di):
             # use read_page instead
         else:
             #this will change
-            print "You have nothing else to read for now"
+            #print "You have nothing else to read for now"
+            for a in pe.backpack:
+                if a.contains("book"):
+                    sentence = "Read " + a
+                    answer = raw_input( sentence + " ? >> " )
+                    if answer == "yes":
+                        print "You read " + a
+                    else:
+                        print "You changed your mind and let the book alone."
+                if b.contains("paper"):
+                    sentence = "Read " + b
+                    answer = raw_input(sentence + "? >> ")
+                    if answer == "yes":
+                        print "You read " + b
+                    else:
+                        print "You changed your mind and let the paper alone."
         number_a = 3
+
+    #SLEEP
     elif act == "sleep":
         number_a = 4
         dream(pe)
+
+    #WRITE
     elif act == "write":
         number_a = 5
         te = raw_input("Write >> ")
         di.write_page(te)
+
+    #GO
+    elif act == "go":
+        for a in pe.places:
+            print a
+        place = raw_input("where do you want to go? >> ")
+        for b in pe.places:
+            if b == place:
+                he_ido = True
+
+        if he_ido:
+            print "You go to " + place
+        #number_a = 6
+        aux = place
+
+    #TAKE
+    elif act == "takes":
+        ob = raw_input("What are you going to take?")
     else:
         print "You do nothing"
+
+    return aux
 
 #dreaming...
 def dream(p):
@@ -253,21 +347,14 @@ else:
 print "Now, you are on your own..."
 
 #key is watching, let the player try other things
+first_sc = Scene("sitio de inicio")
+
+first_sc.add_object("objeto1")
+first_sc.add_object("objeto2")
+first_sc.add_object("objeto3")
+first_sc.add_object("objeto4")
+
 while(action != "see"):
 
     action = raw_input("What do you do? >> ")
-    do_(action, p, diario)
-
-
-print "What do you want to see?"
-print "------------------------"
-print "1- around"
-print "2- my hands"
-print "------------------------"
-
-answer = raw_input("Option >> ")
-
-if answer == "1":
-    print "description"
-else:
-    print "Your hands seem a bit dirty. You should wash them... also there's a scar in the left hand. It seems to have been recently done."
+    do_(action, p, diario, first_sc)
