@@ -190,6 +190,14 @@ def check_m_s(b):
         print b.sent_to[n]
         print "--------------"
 
+#agnadir contacto
+def add_contact(b):
+    n = raw_input("Contact name >> ")
+    nu = raw_input("Contact ID number >> ")
+    fi = n + "#"
+    b.contacts.append(fi+nu)
+    print "Contact added"
+
 #select the action
 def do_(act, pe, di, sc, b):
     number_a = 0
@@ -225,7 +233,7 @@ def do_(act, pe, di, sc, b):
             print x
     #USE
     elif act == "use":
-        #lo_tengo = False
+        lo_tengo = False
         for i in pe.backpack:
             print i
 
@@ -240,7 +248,7 @@ def do_(act, pe, di, sc, b):
             print "You are going to use " + obj
             aux = obj
             answer = 0
-            if "Book" in obj:
+            if "book" in obj:
                 print "Maybe you should *read* it"
 
             if obj == "Noteb0ok":
@@ -268,14 +276,15 @@ def do_(act, pe, di, sc, b):
                 print "Maybe you should *read* it"
 
             if obj == "message_device":
-                while answer != "5":
+                while answer != "6":
                     print "What do you want to do?"
                     print "-----------------------"
                     print "1- Send message"
                     print "2- See last messages"
                     print "3- See last sent"
                     print "4- See contacts"
-                    print "5- Exit"
+                    print "5- Add contact"
+                    print "6- Exit"
                     print "-----------------------"
                     answer = raw_input("Enter the option number >> ")
                     if answer == "1":
@@ -288,6 +297,8 @@ def do_(act, pe, di, sc, b):
                         for i in b.contacts:
                             print i
                     elif answer == "5":
+                        add_contact(b)
+                    elif answer == "6":
                         print "Closing the device..."
                     else:
                         print "Wrong option"
@@ -387,7 +398,7 @@ while answer == "no":
     sentence = "Assistant - Your name is " + name_
     answer = raw_input( sentence + ", right? >> " )
 
-print "Assistant - Nice to meet you " + name_
+print "Assistant - Okay... I'm writing your name down, " + name_
 print " "
 print dice_rule.read()
 print " "
@@ -440,32 +451,40 @@ elif answer == "2":
     print "Assistant - Yes... But that's quite a long story. You seems to be a nice person...Good luck out there, kid."
     p.add_personality("nice")
     p.add_personality("extrovert")
-else:
+elif answer == "3":
     print "Assistant - Quite mysterious. Anyway, be seeing you."
     p.add_personality("shy")
+else:
+    print "Assistant - Yeah... whatever, I didn't undertsand what you said"
 print "--------------------------------------------------------"
 print " "
 
 #learning about the backpack
-print "You check yourself, and notice you are wearing a backpack..."
-answer = raw_input("Want to check the inside? >> ")
 
-if answer == "yes":
-    print "You take your backpack and open it. Takes a sight inside..."
-    for x in p.backpack:
-        print x
-    print " "
-    #learning about the notebook
-    print "There's a notebook there. Want to check the inside? "
+answer = "no"
+
+while answer != "yes" or answer != "Yes" or answer != "YES" or answer != "no" or answer != "No" or answer != "NO":
+    print "You check yourself, and notice you are wearing a backpack..."
     answer = raw_input("Want to check the inside? >> ")
-    if answer == "yes":
-        print "There's stuff writen in here..."
-        page = raw_input("What page do you want to check? >> ")
-        print diario.pages[int(page)]
-    print "From now on, if you want to check your backpack write 'check backpack' when you are not doing anything else. If you want to write in the notebook type 'write' or 'read' to choose read the notebook."
-else:
-    #jump the instructions
-    print "Okay, smart ass."
+
+    if answer == "yes" or answer == "Yes" or answer == "YES":
+        print "You take your backpack and open it. Takes a sight inside..."
+        for x in p.backpack:
+            print x
+        print " "
+        #learning about the notebook
+        print "There's a notebook there. Want to check the inside? "
+        answer = raw_input("Want to check the inside? >> ")
+        if answer == "yes":
+            print "There's stuff writen in here..."
+            page = raw_input("What page do you want to check? >> ")
+            print diario.pages[int(page)]
+        print "From now on, if you want to check your backpack write 'check backpack' when you are not doing anything else. If you want to write in the notebook type 'write' or 'read' to choose read the notebook."
+    elif answer == "no" or answer == "No" or answer == "NO":
+        #jump the instructions
+        print "Okay, smart ass."
+    else:
+        print "Couldn't understand the answer... Use yes/no."
 
 print "Now, you are on your own..."
 
