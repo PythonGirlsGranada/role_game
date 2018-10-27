@@ -385,7 +385,7 @@ def dream(p):
         p.add_personality("happy")
     elif dream == 3:
         p.add_personality("sad")
-    elif dream == 4:
+    elif dream == 5:
         p.add_personality("angry")
 
 print portada.read()
